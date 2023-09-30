@@ -26,7 +26,10 @@ public class EstudianteEntity {
     private String nombres;
     private Date fechaDeNacimiento;
     private String tipoColegio;
+    private String nombreColegio;
     private Long annioEgreso;
+
+
 
 
 
