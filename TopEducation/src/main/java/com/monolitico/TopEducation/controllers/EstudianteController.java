@@ -1,9 +1,11 @@
 package com.monolitico.TopEducation.controllers;
 
 import com.monolitico.TopEducation.entities.EstudianteEntity;
-import com.monolitico.TopEducation.repositories.EstudianteRepository;
+import com.monolitico.TopEducation.services.EstudianteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,12 +15,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 @Controller
-@RequestMapping("/estudiantes")
+@RequestMapping
 public class EstudianteController {
 
     @Autowired
-    private EstudianteRepository estudianteRepository;
-
+    private EstudianteService estudianteService;
+    @GetMapping("/registroEstudiantes")
+    public String mostrarFormularioRegistroEstudiantes() {
+        return "registroEstudiantes"; // El nombre de la página HTML sin la extensión ".html"
+    }
     @PostMapping("/guardarEstudiante")
     public String guardarEstudiante(
             @RequestParam String rut,
@@ -31,18 +36,11 @@ public class EstudianteController {
 
 
 
-        // Crea una instancia de la entidad EstudianteEntity
-        EstudianteEntity estudiante = new EstudianteEntity();
-        estudiante.setRut(rut);
-        estudiante.setApellidos(apellidos);
-        estudiante.setNombres(nombres);
-        estudiante.setFechaDeNacimiento(fechaDeNacimiento); // Asigna la fecha convertida
-        estudiante.setTipoColegio(tipoColegio);
-        estudiante.setNombreColegio(nombreColegio);
-        estudiante.setAnnioEgreso(annioEgreso);
 
-        estudianteRepository.save(estudiante);
 
-        return "redirect:/index.html"; // Redirige a una página de éxito
+
+        estudianteService.saveEstudent(rut,apellidos,nombres,fechaDeNacimiento,tipoColegio,nombreColegio,annioEgreso);
+
+        return "index"; // Redirige a una página de éxito
     }
 }

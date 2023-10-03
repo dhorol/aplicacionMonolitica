@@ -14,40 +14,41 @@
     <section>
         <p>Registra a un estudiante</p>
         <br>
-        <form >
+        <form method="post" action="/guardarEstudiante">
             <label for="rut"> Rut</label>
-            <input type="text" id="rut" name="rut" placeholder="0.000.000-k">
+            <input type="text" id="rut" name="rut" placeholder="0.000.000-k" required>
             <br>
             <br>
             <label for="apellidos"> Apellidos</label>
-            <input type="text" id="apellidos" name="apellidos" placeholder="Morales Pérez">
+            <input type="text" id="apellidos" name="apellidos" placeholder="Morales Pérez" requered>
             <br>
             <br>
             <label for="nombres"> Nombres</label>
-            <input type="text" id="nombres" name="nombres" placeholder="Juan Alberto">
+            <input type="text" id="nombres" name="nombres" placeholder="Juan Alberto" required>
             <br>
             <br>
             <label for="fechaDeNacimiento"> Fecha de nacimiento</label>
-            <input type="date" id="fechaDeNacimiento" name="fechaDeNacimiento" >
+            <input type="date" id="fechaDeNacimiento" name="fechaDeNacimiento" required>
             <br>
             <br>
-            <input type="radio" id="municipal" name="opcion" value="opcion1">
-            <label for="municipal">Municipal</label>
-
-            <input type="radio" id="subvencionado" name="opcion" value="opcion2">
+            <label>Tipo de Colegio:</label>
+            <br>
+            <input type="radio" id="municipal" name="tipoColegio" value="Municipalidad" required>
+            <label for="municipal">Municipalidad</label>
+            <br>
+            <input type="radio" id="subvencionado" name="tipoColegio" value="Subvencionado" required>
             <label for="subvencionado">Subvencionado</label>
-
-
-            <input type="radio" id="privado" name="opcion" value="opcion3">
+            <br>
+            <input type="radio" id="privado" name="tipoColegio" value="Privado" required>
             <label for="privado">Privado</label>
             <br>
             <br>
             <label for="nombreColegio"> Nombre del colegio</label>
-            <input type="text" id="nombreColegio" name="nombreColegio" placeholder="Liceo 10">
+            <input type="text" id="nombreColegio" name="nombreColegio" placeholder="Liceo 10" required>
             <br>
             <br>
             <label for="annioEgreso"> Año de egreso del colegio</label>
-            <input type="number" id="annioEgreso" name="annioEgreso" placeholder="2020">
+            <input type="number" id="annioEgreso" name="annioEgreso" placeholder="2020" required>
             <br>
             <br>
             <button type="submit"> Enviar</button>
@@ -62,6 +63,6 @@
 
     </footer>
     <br>
-    <a href="index.html"> Volver al inicio</a>
+    <a href="/index"> Volver al inicio</a>
 </body>
 </html>
