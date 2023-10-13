@@ -5,7 +5,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.Date;
+
+import java.sql.Date;
 
 
 @Entity
@@ -27,8 +28,7 @@ public class EstudianteEntity {
     private String tipoColegio;
     private String nombreColegio;
     private Long annioEgreso;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "cuota_id")
     private CuotaEntity cuota;
 

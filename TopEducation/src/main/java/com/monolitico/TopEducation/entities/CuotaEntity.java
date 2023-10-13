@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Entity
@@ -19,32 +19,18 @@ public class CuotaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Long id;
-    private Date fecha;
+    private Date fechaInicial;
 
-    @OneToOne(mappedBy = "cuota", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "cuota")
     private EstudianteEntity estudiante;
 
-
-    @OneToOne(mappedBy = "cuota", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "matricula_id")
     private MatriculaEntity matricula;
 
-    @OneToMany(mappedBy = "cuota", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MesCuotaEntity> cuotasMes = new ArrayList<>();
+    @OneToMany(mappedBy = "cuota", cascade = CascadeType.ALL)
+    private List<MesCuotaEntity> mesCuotas = new ArrayList<>();
 
-    public CuotaEntity(EstudianteEntity estudiante) {
-        this.fecha = new Date();
-        this.estudiante = estudiante;
-
-        // Inicializa la lista de matrículas
-        MatriculaEntity matricula = new MatriculaEntity();
-        matricula.setMes("matricula");
-        matricula.setPagado(false);
-        matricula.setMonto(70000L);
-        matricula.setCuota(this);
-        this.matricula = matricula;
-
-        // No es necesario inicializar la lista de cuotas mensuales aquí, ya que se hará a medida que se agreguen MesCuotaEntity.
-    }
 
 
 }

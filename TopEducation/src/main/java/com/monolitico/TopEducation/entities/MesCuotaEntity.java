@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+
 @Entity
 @Table(name = "MesCuota")
 @Data
@@ -18,9 +20,10 @@ public class MesCuotaEntity {
 
     private String mes;
     private boolean pagado;
-    private Number monto;
-
+    private Double monto;
+    private Date vencimiento;
     @ManyToOne
     @JoinColumn(name = "cuota_id")
     private CuotaEntity cuota;
+
 }

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Cuota</title>
+</head>
+<body>
+<h1>Detalle de Cuota</h1>
+
+<div th:if="${cuota != null}">
+    <p><strong>ID:</strong> <span th:text="${cuota.id}"></span></p>
+    <p><strong>Estado de Matrícula:</strong> <span th:text="${cuota.matricula.pagado ? 'Pagada' : 'No Pagada'}"></span></p>
+
+    <!-- Botón para marcar matrícula como pagada -->
+    <div th:if="${!cuota.matricula.pagado}">
+        <form th:action="@{/detalleCuota/{id}(id=${cuota.id})}" method="post">
+            <input type="submit" value="Marcar Matrícula como Pagada"/>
+        </form>
+    </div>
+
+    <!-- Formulario para elegir cómo pagar el arancel, solo visible si la matrícula ha sido pagada y mesCuotas está vacío -->
+    <div th:if="${cuota.matricula.pagado and cuota.mesCuotas.isEmpty()}">
+        <h3>¿Cómo desea pagar el arancel?</h3>
+        <form th:action="@{/detalleCuota/pagarArancel/{id}(id=${cuota.id})}" method="post">
+            <input type="radio" name="opcionPago" value="contado" required> Al contado<br>
+            <input type="radio" name="opcionPago" value="cuotas"> Con cuotas<br>
+            <input type="submit" value="Confirmar"/>
+        </form>
+    </div>
+
+    <!-- Lista de cuotas si ya están creadas -->
+    <div th:if="${!cuota.mesCuotas.isEmpty()}">
+        <h3>Cuotas a pagar</h3>
+        <ul>
+            <li th:each="mesCuota : ${cuota.mesCuotas}" th:unless="${mesCuota.pagado}">
+                <span th:text="${mesCuota.mes} + ': $' + ${mesCuota.monto}"></span>
+                <!-- Botón para pagar la cuota del mes -->
+                <form th:action="@{/detalleCuota/pagarCuota/{id}(id=${mesCuota.id})}" method="post">
+                    <input type="submit" value="Pagar Cuota"/>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Aquí puedes agregar más detalles relacionados con la cuota o cualquier otro campo relevante. -->
+
+</div>
+
+<div th:if="${cuota == null}">
+    <p>Lo siento, no se pudo encontrar el detalle de la cuota.</p>
+</div>
+
+</body>
+</html>

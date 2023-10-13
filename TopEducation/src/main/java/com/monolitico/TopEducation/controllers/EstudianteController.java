@@ -1,10 +1,12 @@
 package com.monolitico.TopEducation.controllers;
 
 
+import com.monolitico.TopEducation.entities.EstudianteEntity;
 import com.monolitico.TopEducation.services.EstudianteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,14 +35,16 @@ public class EstudianteController {
             @RequestParam String nombreColegio,
             @RequestParam Long annioEgreso) {
 
-
-
-
-
-
-
         estudianteService.saveEstudent(rut,apellidos,nombres,fechaDeNacimiento,tipoColegio,nombreColegio,annioEgreso);
 
         return "index"; // Redirige a una página de éxito
     }
+    @GetMapping("/cuotasEstudiantes")
+    public String listarEstudiantes(Model model) {
+        Iterable<EstudianteEntity> estudiantes = estudianteService.getAllEstudiantes();
+        model.addAttribute("estudiantes", estudiantes);
+        return "cuotasEstudiantes"; // nombre de la página HTML que mostrará la lista
+    }
+
+
 }

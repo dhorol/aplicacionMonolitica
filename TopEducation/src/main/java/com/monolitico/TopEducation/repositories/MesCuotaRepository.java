@@ -1,8 +1,10 @@
 package com.monolitico.TopEducation.repositories;
 
-import com.monolitico.TopEducation.entities.MatriculaEntity;
+
+import com.monolitico.TopEducation.entities.MesCuotaEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
 @Repository
-public interface MatriculaRepository extends CrudRepository<MatriculaEntity, Long> {
+public interface MesCuotaRepository extends CrudRepository<MesCuotaEntity, Long> {
 }

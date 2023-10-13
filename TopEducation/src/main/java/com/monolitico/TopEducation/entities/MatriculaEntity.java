@@ -16,15 +16,11 @@ public class MatriculaEntity {
     @Column(unique = true, nullable = false)
     private Long id;
 
-    private String mes;
+    private String nombreMatricula;
     private boolean pagado;
-    private Long monto;
-
-    @OneToOne
-    @JoinColumn(name = "cuota_id")
+    private Double monto;
+    @OneToOne(mappedBy = "matricula")
     private CuotaEntity cuota;
-
-
 
 
 }

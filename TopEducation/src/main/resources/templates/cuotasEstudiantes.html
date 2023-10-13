@@ -5,6 +5,23 @@
     <title>Cuotas estudiantes</title>
 </head>
 <body>
-<h1> Cuotas de los estudiantes</h1>
+<h1>Cuotas de los estudiantes</h1>
+
+<!-- Tabla para mostrar la lista de estudiantes -->
+<table border="1">
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Detalle de Cuota</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Aquí usamos Thymeleaf para iterar sobre la lista de estudiantes -->
+    <tr th:each="estudiante : ${estudiantes}">
+        <td th:text="${estudiante.nombres} + ' ' + ${estudiante.apellidos}"></td>
+        <td><a th:href="@{/detalleCuota/{id}(id=${estudiante.id})}">Ver Cuota</a></td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>
