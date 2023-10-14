@@ -65,6 +65,24 @@ public class OficinaCuotaService {
         List<MesCuotaEntity> cuotas = new ArrayList<>();
 
         double montoBase = 1500000;
+
+        // Obteniendo el año actual
+        Calendar now = Calendar.getInstance();
+        int currentYear = now.get(Calendar.YEAR);
+
+        // Calculando años desde el egreso
+        int yearsSinceGraduation = currentYear - estudiante.getAnnioEgreso().intValue();
+
+        // Aplicando descuento basado en años desde el egreso
+        if (yearsSinceGraduation < 1) {
+            montoBase *= 0.85; // 15% de descuento
+        } else if (yearsSinceGraduation >= 1 && yearsSinceGraduation <= 2) {
+            montoBase *= 0.92; // 8% de descuento
+        } else if (yearsSinceGraduation >= 3 && yearsSinceGraduation <= 4) {
+            montoBase *= 0.96; // 4% de descuento
+        }
+        // Si son 5 años o más, no se aplica descuento y se mantiene el monto base
+
         int numeroCuotas = 0;
         double montoCuota = 0;
         String[] meses = {};
@@ -86,7 +104,7 @@ public class OficinaCuotaService {
                 mesesNumerico = new int[]{Calendar.MARCH, Calendar.APRIL, Calendar.MAY, Calendar.JUNE, Calendar.JULY, Calendar.AUGUST, Calendar.SEPTEMBER};
                 break;
 
-            case "Privada":
+            case "Privado":
                 montoCuota = montoBase / 4;
                 numeroCuotas = 4;
                 meses = new String[]{"Marzo", "Abril", "Mayo", "Junio"};

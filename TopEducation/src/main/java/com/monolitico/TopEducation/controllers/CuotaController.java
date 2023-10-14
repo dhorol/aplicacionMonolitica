@@ -38,7 +38,7 @@ public class CuotaController {
         } else {
             oficinaCuotaService.crearCuotasParaEstudiante(id);
             redirectAttributes.addFlashAttribute("successMessage", "Cuotas creadas con éxito.");
-            return "redirect:/cuotasEstudiantes";
+            return "redirect:/detalleCuota/" + id;
         }
     }
 

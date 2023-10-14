@@ -31,19 +31,33 @@
     <!-- Lista de cuotas si ya están creadas -->
     <div th:if="${!cuota.mesCuotas.isEmpty()}">
         <h3>Cuotas a pagar</h3>
-        <ul>
-            <li th:each="mesCuota : ${cuota.mesCuotas}" th:unless="${mesCuota.pagado}">
-                <span th:text="${mesCuota.mes} + ': $' + ${mesCuota.monto}"></span>
-                <!-- Botón para pagar la cuota del mes -->
-                <form th:action="@{/detalleCuota/pagarCuota/{id}(id=${mesCuota.id})}" method="post">
-                    <input type="submit" value="Pagar Cuota"/>
-                </form>
-            </li>
-        </ul>
+
+        <!-- Tabla de cuotas -->
+        <table border="1">
+            <thead>
+            <tr>
+                <th>Mes</th>
+                <th>Monto</th>
+                <th>Estado</th>
+                <th>Vencimiento</th>
+                <th>Accion</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="mesCuota : ${cuota.mesCuotas}">
+                <td th:text="${mesCuota.mes}"></td>
+                <td th:text="'$' + ${mesCuota.monto}"></td>
+                <td th:text="${mesCuota.pagado ? 'Pagado' : 'No Pagado'}"></td>
+                <td th:text="${mesCuota.vencimiento}"></td>
+                <td th:unless="${mesCuota.pagado}">
+                    <form th:action="@{/detalleCuota/pagarCuota/{id}(id=${mesCuota.id})}" method="post">
+                        <input type="submit" value="Pagar Cuota"/>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-
-    <!-- Aquí puedes agregar más detalles relacionados con la cuota o cualquier otro campo relevante. -->
-
 </div>
 
 <div th:if="${cuota == null}">
