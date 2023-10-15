@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Examenes de los estudiantes</title>
+</head>
+<body>
+<header>
+  <h1>Subir Resultados de Exámenes</h1>
+</header>
+
+<section>
+  <form action="/upload-exam-results" method="post" enctype="multipart/form-data">
+    <label for="file">Selecciona el archivo Excel:</label>
+    <input type="file" id="file" name="file">
+    <input type="submit" value="Subir Resultados">
+  </form>
+
+  <form action="/delete-all-exams" method="post">
+    <input type="submit" value="Eliminar Todos los Exámenes" onclick="return confirm('¿Estás seguro de que deseas eliminar todos los exámenes?');">
+  </form>
+
+
+</section>
+
+<footer>
+  © 2023 TopEducation. Todos los derechos reservados.
+</footer>
+</body>
+</html>

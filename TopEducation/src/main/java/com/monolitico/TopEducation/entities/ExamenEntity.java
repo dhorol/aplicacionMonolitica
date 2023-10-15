@@ -5,34 +5,27 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.sql.Date;
-import java.util.List;
 
 @Entity
-@Table(name = "Cuota")
+@Table(name = "Examen")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CuotaEntity {
+public class ExamenEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Long id;
-    private Date fechaInicial;
-    private boolean pagado;
 
-
-    @OneToOne(mappedBy = "cuota")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estudiante_id", referencedColumnName = "id") // Cambia "rut_estudiante" a "estudiante_id" y "rut" a "id"
     private EstudianteEntity estudiante;
 
-    @OneToOne
-    @JoinColumn(name = "matricula_id")
-    private MatriculaEntity matricula;
+    private String rutEstudiante;
+    @Column(name = "fecha_examen", nullable = false)
+    private Date fechaExamen;
 
-    @OneToMany(mappedBy = "cuota", cascade = CascadeType.ALL)
-    private List<MesCuotaEntity> mesCuotas = new ArrayList<>();
-
-
-
+    @Column(nullable = false)
+    private double puntaje;
 }

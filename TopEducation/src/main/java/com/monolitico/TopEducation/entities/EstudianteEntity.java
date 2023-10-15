@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -32,8 +34,8 @@ public class EstudianteEntity {
     @JoinColumn(name = "cuota_id")
     private CuotaEntity cuota;
 
-
-
+    @OneToMany(mappedBy = "estudiante", cascade = CascadeType.ALL)
+    private List<ExamenEntity> examenes = new ArrayList<>();
 
 
 

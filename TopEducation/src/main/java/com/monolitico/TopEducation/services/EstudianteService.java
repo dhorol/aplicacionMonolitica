@@ -47,9 +47,13 @@ public class EstudianteService {
         CuotaEntity cuotaInicial = new CuotaEntity();
 
         // Establecer la fecha del 15 de marzo de 2023 para la cuota inicial
-        Calendar cal = Calendar.getInstance();
-        cal.set(2023, Calendar.MARCH, 15);
-        cuotaInicial.setFechaInicial(new Date(cal.getTimeInMillis()));
+        //Calendar cal = Calendar.getInstance();
+        //cal.set(2023, Calendar.APRIL, 14);
+        //cuotaInicial.setFechaInicial(new Date(cal.getTimeInMillis()));
+        //Fecha actual
+        Calendar cal = Calendar.getInstance();  // Obtenemos una instancia del calendario que ya viene con la fecha y hora actual.
+        cuotaInicial.setFechaInicial(new Date(cal.getTimeInMillis()));  // Establecemos la fecha actual
+        cuotaInicial.setPagado(false);
 
         // Guardar la cuota inicial en la base de datos
         cuotaRepository.save(cuotaInicial);

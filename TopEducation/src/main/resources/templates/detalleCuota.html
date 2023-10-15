@@ -18,7 +18,7 @@
         </form>
     </div>
 
-    <!-- Formulario para elegir cómo pagar el arancel, solo visible si la matrícula ha sido pagada y mesCuotas está vacío -->
+    <!-- Formulario para elegir cómo pagar el arancel -->
     <div th:if="${cuota.matricula.pagado and cuota.mesCuotas.isEmpty()}">
         <h3>¿Cómo desea pagar el arancel?</h3>
         <form th:action="@{/detalleCuota/pagarArancel/{id}(id=${cuota.id})}" method="post">
@@ -31,8 +31,6 @@
     <!-- Lista de cuotas si ya están creadas -->
     <div th:if="${!cuota.mesCuotas.isEmpty()}">
         <h3>Cuotas a pagar</h3>
-
-        <!-- Tabla de cuotas -->
         <table border="1">
             <thead>
             <tr>
@@ -50,9 +48,11 @@
                 <td th:text="${mesCuota.pagado ? 'Pagado' : 'No Pagado'}"></td>
                 <td th:text="${mesCuota.vencimiento}"></td>
                 <td th:unless="${mesCuota.pagado}">
-                    <form th:action="@{/detalleCuota/pagarCuota/{id}(id=${mesCuota.id})}" method="post">
+                    <!-- Actualización en la acción del formulario -->
+                    <form th:action="@{/detalleCuota/pagarMesCuota/{id}(id=${mesCuota.id})}" method="post">
                         <input type="submit" value="Pagar Cuota"/>
                     </form>
+
                 </td>
             </tr>
             </tbody>
