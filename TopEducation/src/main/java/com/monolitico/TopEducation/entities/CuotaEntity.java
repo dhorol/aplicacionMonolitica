@@ -21,6 +21,13 @@ public class CuotaEntity {
     private Long id;
     private Date fechaInicial;
     private boolean pagado;
+    private Double montoTotalArancel;
+    private Integer numeroCuotas;
+    private Integer cuotasPagadas;
+    private Double montoPagado;
+    private Date ultimoPago;
+    private Double pagoRestante;
+
 
 
     @OneToOne(mappedBy = "cuota")

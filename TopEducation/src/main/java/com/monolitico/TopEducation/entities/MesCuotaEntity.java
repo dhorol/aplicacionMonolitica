@@ -22,9 +22,37 @@ public class MesCuotaEntity {
     private boolean pagado;
     private Double monto;
     private Date vencimiento;
+    private Integer retrasos;
     @ManyToOne
     @JoinColumn(name = "cuota_id")
     private CuotaEntity cuota;
+
+    @Transient
+    private Boolean previouslyPaid;
+
+    @Transient
+    private Double montoOriginal;
+
+    public void guardarMontoOriginal() {
+        this.montoOriginal = this.monto;
+    }
+
+    public double calcularDiferenciaPorInteres() {
+        return this.monto - this.montoOriginal;
+    }
+
+    @PostLoad
+    public void onLoad() {
+        this.previouslyPaid = this.pagado;
+    }
+
+    public void markAsModified() {
+        this.previouslyPaid = this.pagado;
+    }
+
+    public boolean wasPreviouslyPaid() {
+        return previouslyPaid != null && previouslyPaid;
+    }
 
     // Método para obtener el valor numérico del mes
 

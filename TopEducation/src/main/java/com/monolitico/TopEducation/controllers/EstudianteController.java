@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.Date;
+import java.util.List;
 
 
 @Controller
@@ -44,6 +45,12 @@ public class EstudianteController {
         Iterable<EstudianteEntity> estudiantes = estudianteService.getAllEstudiantes();
         model.addAttribute("estudiantes", estudiantes);
         return "cuotasEstudiantes"; // nombre de la página HTML que mostrará la lista
+    }
+    @GetMapping("/reportePagos")
+    public String reportePagos(Model model) {
+        List<EstudianteEntity> estudiantes = estudianteService.findAll();
+        model.addAttribute("estudiantes", estudiantes);
+        return "reportePagos";
     }
 
 

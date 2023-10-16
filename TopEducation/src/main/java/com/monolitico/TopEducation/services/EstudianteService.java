@@ -2,6 +2,7 @@ package com.monolitico.TopEducation.services;
 
 import com.monolitico.TopEducation.entities.CuotaEntity;
 import com.monolitico.TopEducation.entities.MatriculaEntity;
+import com.monolitico.TopEducation.entities.MesCuotaEntity;
 import com.monolitico.TopEducation.repositories.EstudianteRepository;
 import com.monolitico.TopEducation.repositories.CuotaRepository;
 import com.monolitico.TopEducation.repositories.MatriculaRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.sql.Date;
+import java.util.List;
 
 @Service
 public class EstudianteService {
@@ -43,18 +45,29 @@ public class EstudianteService {
         estudiante.setNombreColegio(nombreColegio);
         estudiante.setAnnioEgreso(annioEgreso);
 
+        // Configuración inicial de montoTotalArancel y tipoPago
+        estudiante.setTipoPago(""); // Inicializamos tipoPago a un string vacío
+        estudiante.setExamenesRendidos(0);
+        estudiante.setPromedioExamenes(0.0);
+
+
         // Crear una cuota inicial
         CuotaEntity cuotaInicial = new CuotaEntity();
 
         // Establecer la fecha del 15 de marzo de 2023 para la cuota inicial
-        //Calendar cal = Calendar.getInstance();
-        //cal.set(2023, Calendar.APRIL, 14);
-        //cuotaInicial.setFechaInicial(new Date(cal.getTimeInMillis()));
+        Calendar cal = Calendar.getInstance();
+        cal.set(2023, Calendar.SEPTEMBER, 14);
+        cuotaInicial.setFechaInicial(new Date(cal.getTimeInMillis()));
         //Fecha actual
-        Calendar cal = Calendar.getInstance();  // Obtenemos una instancia del calendario que ya viene con la fecha y hora actual.
-        cuotaInicial.setFechaInicial(new Date(cal.getTimeInMillis()));  // Establecemos la fecha actual
+        //Calendar cal = Calendar.getInstance();  // Obtenemos una instancia del calendario que ya viene con la fecha y hora actual.
+        //cuotaInicial.setFechaInicial(new Date(cal.getTimeInMillis()));  // Establecemos la fecha actual
+        //cuotaInicial.setPagado(false);
         cuotaInicial.setPagado(false);
-
+        cuotaInicial.setMontoTotalArancel(0.0);
+        cuotaInicial.setNumeroCuotas(0);
+        cuotaInicial.setCuotasPagadas(0);
+        cuotaInicial.setMontoPagado(0.0);
+        cuotaInicial.setPagoRestante(0.0);
         // Guardar la cuota inicial en la base de datos
         cuotaRepository.save(cuotaInicial);
 
@@ -81,5 +94,21 @@ public class EstudianteService {
     public Iterable<EstudianteEntity> getAllEstudiantes() {
         return estudianteRepository.findAll();
     }
+
+    public List<EstudianteEntity> findAll() {
+        return estudianteRepository.findAll();
+    }
+
+    public Integer cuotasConRetraso(EstudianteEntity estudiante) {
+        int cuotasConRetraso = 0;
+        for (MesCuotaEntity mesCuota : estudiante.getCuota().getMesCuotas()) {
+            if (mesCuota.getRetrasos() > 0) {
+                cuotasConRetraso++;
+            }
+        }
+        return cuotasConRetraso;
+    }
+
+
 
 }

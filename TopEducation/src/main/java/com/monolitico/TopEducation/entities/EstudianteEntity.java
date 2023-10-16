@@ -30,6 +30,12 @@ public class EstudianteEntity {
     private String tipoColegio;
     private String nombreColegio;
     private Long annioEgreso;
+    private String tipoPago;
+    private Integer examenesRendidos;
+    private Double promedioExamenes;
+
+
+
     @OneToOne
     @JoinColumn(name = "cuota_id")
     private CuotaEntity cuota;

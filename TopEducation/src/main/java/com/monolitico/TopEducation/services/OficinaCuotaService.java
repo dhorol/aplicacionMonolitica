@@ -43,6 +43,7 @@ public class OficinaCuotaService {
         CuotaEntity cuota = findCuotaById(id);
         if (cuota != null && cuota.getMatricula() != null) {
             cuota.getMatricula().setPagado(true);
+            cuota.setMontoPagado(70000.0);
             cuotaRepository.save(cuota);
         }
     }
@@ -52,8 +53,10 @@ public class OficinaCuotaService {
         if (cuota != null) {
             MesCuotaEntity mesCuota = new MesCuotaEntity();
             mesCuota.setCuota(cuota);
-            mesCuota.setMonto(1500000 * 0.5);  // 50% de 1,500,000
+            double montoAlContado = 1500000 * 0.5;  // 50% de 1,500,000
+            mesCuota.setMonto(montoAlContado);
             mesCuota.setPagado(true);
+
             // Extraer el mes de la fecha 'fechaInicial' en 'cuota'
             SimpleDateFormat sdf = new SimpleDateFormat("MMMM");
             String mes = sdf.format(cuota.getFechaInicial());
@@ -63,8 +66,23 @@ public class OficinaCuotaService {
 
             // Si trabajas con un repositorio de MesCuota, debes guardarlo ahí.
             mesCuotaRepository.save(mesCuota);
+
+            // Actualizar el método de pago del estudiante
+            EstudianteEntity estudiante = cuota.getEstudiante();
+            estudiante.setTipoPago("Al contado");
+            estudianteRepository.save(estudiante);
+
+            // Sumar el monto al 'MontoPagado' existente en 'cuota'
+            double montoPagadoActual = cuota.getMontoPagado() == null ? 0.0 : cuota.getMontoPagado();
+            cuota.setMontoPagado(montoPagadoActual + montoAlContado);
+            cuota.setPagado(true);
+            Calendar cal = Calendar.getInstance();
+            cuota.setUltimoPago(new Date(cal.getTimeInMillis()));
+            cuotaRepository.save(cuota);
         }
     }
+
+
     @Transactional
     public void crearCuotasParaEstudiante(Long id) {
         CuotaEntity cuota = findCuotaById(id);
@@ -125,6 +143,7 @@ public class OficinaCuotaService {
             mesCuota.setPagado(false);
             mesCuota.setMonto(montoCuota);
             mesCuota.setMes(meses[i]);
+            mesCuota.setRetrasos(0);
 
             // Establece la fecha de vencimiento
             Calendar cal = Calendar.getInstance();
@@ -134,32 +153,45 @@ public class OficinaCuotaService {
 
             cuotas.add(mesCuota);
         }
-
+        cuota.setMontoTotalArancel(montoCuota * numeroCuotas);
+        cuota.setNumeroCuotas(numeroCuotas);
+        cuota.setPagoRestante(montoCuota * numeroCuotas);
+        estudiante.setTipoPago("Con Cuotas");
+        estudianteRepository.save(estudiante);
         cuota.setMesCuotas(cuotas);
         cuotaRepository.save(cuota);
 
     }
     @Transactional
     public void calcularYAplicarIntereses(CuotaEntity cuota) {
-        //Date fechaInicial = cuota.getFechaInicial();
+        Date fechaInicial = cuota.getFechaInicial();
 
         //Estas 3 lineas son para probar, al momento de la api real debe ser el de arriba que esta comentado
-        Calendar cal = Calendar.getInstance();
-        cal.set(2023, Calendar.MARCH, 14);
-        Date fechaInicial= new Date(cal.getTimeInMillis());
+        //Calendar cal = Calendar.getInstance();
+        //cal.set(2023, Calendar.MARCH, 14);
+        //Date fechaInicial= new Date(cal.getTimeInMillis());
 
         Calendar fechaActual = Calendar.getInstance();
         fechaActual.setTime(fechaInicial);
         int mesesDeAtraso;
 
         for (MesCuotaEntity mesCuota : cuota.getMesCuotas()) {
-            if (!mesCuota.isPagado()) {
+            if (!mesCuota.isPagado() ) {
                 java.sql.Date fechaActualSql = new java.sql.Date(fechaActual.getTimeInMillis());
                 mesesDeAtraso = calcularMesesDeAtraso(mesCuota.getVencimiento(), fechaActualSql);
                 aplicarInteres(mesCuota, mesesDeAtraso);
+
                 mesCuotaRepository.save(mesCuota);  // Guarda el cambio en la base de datos
             }
         }
+        double montoRestante = 0;
+        for (MesCuotaEntity mesCuota : cuota.getMesCuotas()) {
+            if (!mesCuota.isPagado()) {
+                montoRestante += mesCuota.getMonto();
+            }
+        }
+        cuota.setPagoRestante(montoRestante);
+
         cuotaRepository.save(cuota);
     }
 
@@ -172,8 +204,17 @@ public class OficinaCuotaService {
         endCalendar.setTime(fechaActual);
 
         int diffYear = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);
-        return diffYear * 12 + endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH);
+        int diffMonth = diffYear * 12 + endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH);
+
+        // Si estamos en el mismo mes y el día actual es posterior al día de vencimiento,
+        // sumamos un mes de atraso.
+        if (diffMonth == 0 && endCalendar.get(Calendar.DAY_OF_MONTH) > startCalendar.get(Calendar.DAY_OF_MONTH)) {
+            diffMonth++;
+        }
+
+        return diffMonth;
     }
+
 
     private void aplicarInteres(MesCuotaEntity mesCuota, int mesesDeAtraso) {
         double interes = 0;
@@ -186,6 +227,13 @@ public class OficinaCuotaService {
         } else if (mesesDeAtraso > 3) {
             interes = 0.15 + (0.15 * (mesesDeAtraso - 3));
         }
+        if (mesesDeAtraso > 0){
+            mesCuota.setRetrasos(mesesDeAtraso);
+        }
+        else {
+            mesCuota.setRetrasos(0);
+        }
+
 
         double nuevoMonto = mesCuota.getMonto() * (1 + interes);
         nuevoMonto = (double) Math.round(nuevoMonto);
@@ -204,20 +252,42 @@ public class OficinaCuotaService {
         }
 
         mesCuota.setPagado(pagado);
+
         mesCuotaRepository.save(mesCuota);
 
         verificarYActualizarCuotaComoPagada(mesCuota.getCuota());
     }
 
     private void verificarYActualizarCuotaComoPagada(CuotaEntity cuota) {
-        // Verificar si todos los MesCuotaEntity asociados a CuotaEntity están pagados
-        boolean todosPagados = cuota.getMesCuotas().stream().allMatch(MesCuotaEntity::isPagado);
+        boolean todosPagados = true;
+
+        double montoTotalPagado = cuota.getMontoPagado();
+
+        for (MesCuotaEntity mesCuota : cuota.getMesCuotas()) {
+            if (mesCuota.isPagado() && !mesCuota.wasPreviouslyPaid()) {
+                montoTotalPagado += mesCuota.getMonto();
+            } else if (!mesCuota.isPagado()) {
+                todosPagados = false;
+            }
+        }
+
+        cuota.setMontoPagado(montoTotalPagado);
+        cuota.setCuotasPagadas((int) cuota.getMesCuotas().stream().filter(MesCuotaEntity::isPagado).count());
 
         if (todosPagados) {
             cuota.setPagado(true);
-            cuotaRepository.save(cuota);
         }
+
+        // Si se ha pagado alguna cuota, actualizar el campo 'ultimoPago'
+        if (cuota.getCuotasPagadas() > 0) {
+            Calendar cal = Calendar.getInstance();
+            cuota.setUltimoPago(new Date(cal.getTimeInMillis()));
+        }
+
+        cuota.setPagoRestante(cuota.getMontoTotalArancel() - montoTotalPagado);
+        cuotaRepository.save(cuota);
     }
+
 
     @Transactional
     public void aplicarDescuentoPorPromedioExamen(CuotaEntity cuota) {
@@ -231,6 +301,13 @@ public class OficinaCuotaService {
 
         double promedio = examenes.size() > 0 ? sumaPuntajes / examenes.size() : 0;
 
+        // Guardar el promedio y la cantidad de exámenes rendidos en el estudiante.
+        estudiante.setPromedioExamenes(promedio);
+        estudiante.setExamenesRendidos(examenes.size());
+
+        // Guardar los cambios en el repositorio.
+        estudianteRepository.save(estudiante);
+
         double descuento = 0;
         if (promedio >= 950) {
             descuento = 0.10;
@@ -243,9 +320,6 @@ public class OficinaCuotaService {
         // Obtener el mes actual
         int mesActual = LocalDate.now().getMonthValue();
 
-        // Usa el mes de prueba en lugar del mes actual
-        //int mesActual = //MES_PRUEBA(Es el numero del mes; ej: marzo=3;
-
         for (MesCuotaEntity mesCuota : cuota.getMesCuotas()) {
             // Solo aplicar el descuento si el mes de MesCuotaEntity es el mes actual
             if (mesCuota.getMesNumerico() == mesActual) {
@@ -256,6 +330,7 @@ public class OficinaCuotaService {
         }
         cuotaRepository.save(cuota);
     }
+
 
 
 

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte Resumen de Pagos</title>
+</head>
+<body>
+<h1>Reporte Resumen de Pagos de Estudiantes</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>RUT</th>
+        <th>Nombre</th>
+        <th>Nro. Exámenes</th>
+        <th>Promedio Exámenes</th>
+        <th>Arancel Total</th>
+        <th>Tipo Pago</th>
+        <th>Cuotas Pactadas</th>
+        <th>Cuotas Pagadas</th>
+        <th>Total Pagado</th>
+        <th>Fecha Último Pago</th>
+        <th>Saldo</th>
+        <th>Cuotas con Retraso</th>
+    </tr>
+    </thead>
+    <tbody>
+    <th:block th:each="estudiante : ${estudiantes}">
+        <tr>
+            <td th:text="${estudiante.rut}"></td>
+            <td th:text="${estudiante.nombres} + ' ' + ${estudiante.apellidos}"></td>
+            <td th:text="${estudiante.examenesRendidos}"></td>
+            <td th:text="${estudiante.promedioExamenes}"></td>
+            <td th:text="${estudiante.cuota.montoTotalArancel}"></td>
+            <td th:text="${estudiante.tipoPago}"></td>
+            <td th:text="${estudiante.cuota.numeroCuotas}"></td>
+            <td th:text="${estudiante.cuota.cuotasPagadas}"></td>
+            <td th:text="${estudiante.cuota.montoPagado}"></td>
+            <td th:text="${estudiante.cuota.ultimoPago}"></td>
+            <td th:text="${estudiante.cuota.pagoRestante}"></td>
+            <td th:text="${estudianteService.cuotasConRetraso(estudiante)}"></td>
+        </tr>
+    </th:block>
+    </tbody>
+</table>
+</body>
+</html>
