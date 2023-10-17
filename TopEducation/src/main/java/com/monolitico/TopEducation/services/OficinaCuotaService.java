@@ -28,8 +28,7 @@ public class OficinaCuotaService {
     private EstudianteRepository estudianteRepository;
     @Autowired
     private CuotaRepository cuotaRepository;
-    @Autowired
-    private MatriculaRepository matriculaRepository;
+
     @Autowired
     private MesCuotaRepository mesCuotaRepository;
 
