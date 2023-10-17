@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  postgres-db:
+    image: postgres
+    restart: always
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: shinis
+      POSTGRES_DB: Monolitica
+    ports:
+      - 5432:5432
+  app:
+    container_name: aplicacion_monolitica
+    image: dhorol/aplicacion_monolitica
+    ports:
+      - "8091:8090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/Monolitica?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=shinis
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - postgres-db
