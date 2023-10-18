@@ -1,0 +1,5 @@
+jenkins.war
+sonarQ.txt
+sonarqube-9.9.0.65466
+jenkins.war.bak
+jenkins.war.tmp
