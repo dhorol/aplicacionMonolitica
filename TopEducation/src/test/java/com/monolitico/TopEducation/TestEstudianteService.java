@@ -70,10 +70,8 @@ public class TestEstudianteService {
 
     @Test
     public void testCuotasConRetraso() {
-        // Aquí puedes definir un estudianteEntity mock con una lista de MesCuotaEntity con ciertos valores
-        // para probar diferentes casos del método cuotasConRetraso.
-        // Por ejemplo, puedes probar un caso donde no hay retrasos, uno donde hay 1 retraso y otro donde hay múltiples retrasos.
+
     }
 
-    // Puedes agregar más pruebas para otros métodos de la misma manera
+
 }
