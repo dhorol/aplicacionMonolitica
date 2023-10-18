@@ -1,15 +1,6 @@
 version: "3.9"
 services:
-  nginx:
-    image: nginx:latest
-    container_name: nginx-proxy
-    restart: always
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-    depends_on:
-      - aplicacion_monolitica
+
   postgresql-db:
     image: postgres
     restart: always
@@ -21,7 +12,7 @@ services:
     ports:
       - 5432:5432
 
-  aplicacion_monolitica:
+  app:
     container_name: aplicacion_monolitica
     image: dhorol/aplicacion_monolitica
     ports:
